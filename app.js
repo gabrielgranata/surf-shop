@@ -1,13 +1,14 @@
-const createError   = require('http-errors');
-const express       = require('express');
-const path          = require('path');
-const favicon       = require('serve-favicon');
-const cookieParser  = require('cookie-parser');
-const logger        = require('morgan');
-const bodyParser    = require('body-parser');
-const session       = require('express-session');
-const passport      = require('passport');
-const mongoose      = require('mongoose');
+const createError     = require('http-errors');
+const express         = require('express');
+const path            = require('path');
+const favicon         = require('serve-favicon');
+const cookieParser    = require('cookie-parser');
+const logger          = require('morgan');
+const bodyParser      = require('body-parser');
+const session         = require('express-session');
+const passport        = require('passport');
+const mongoose        = require('mongoose');
+const methodOverride  = require('method-override');
 
 // require models
 const User = require('./models/user');
@@ -20,7 +21,7 @@ const reviewRouter  = require('./routes/reviews');
 const app = express();
 
 // connect to the database
-mongoose.connect('mongodb://localhost:27017/surf-shop', { useNewUrlParser: true} );
+mongoose.connect('mongodb://localhost:27017/surf-shop', { useNewUrlParser: true, useFindAndModify: false} );
 mongoose.set('useCreateIndex', true);
 
 const db = mongoose.connection;
@@ -36,9 +37,10 @@ app.set('view engine', 'ejs');
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(methodOverride('_method'));
 
 //configure passport & sessions
 app.use(session({
